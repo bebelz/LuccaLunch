@@ -1,0 +1,7 @@
+{
+  "name": "Lucca Lunch",
+  "short_name": "Lucca Lunch",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait"
+}

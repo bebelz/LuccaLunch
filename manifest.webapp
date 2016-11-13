@@ -1,0 +1,26 @@
+{
+  "version": "1.0.0",
+  "name": "LuccaLunch",
+  "launch_path": "/index.html",
+  "description": "Lunch Management",
+  "developer": {
+    "name": "Benoît Belz",
+    "url": "http://www.lucca.fr/"
+  },
+  "installs_allowed_from": [
+    "*"
+  ],
+  "default_locale": "fr",
+  "permissions": {
+  },
+  "locales": {
+    "fr": {
+      "name": "LuccaLunch",
+      "description": "Lunch Management"
+    },
+    "en": {
+      "name": "LuccaLunch",
+      "description": "Lunch Management"
+    }
+  }
+}
