@@ -1,7 +1,7 @@
 {
   "rules": {
     "lunchs": {
-      ".read": "auth != null",
+      ".read": "auth != null  && auth.email.endsWith('@lucca.fr')",
       ".write": "auth != null"
     }
   }

@@ -57,7 +57,14 @@ LuccaLunch.prototype.signOut = function () {
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 LuccaLunch.prototype.onAuthStateChanged = function (user) {
-    if (user) { // User is signed in!
+    if (user) {
+		// We are limiting acces lucca.fr users for now
+		if(!user.email.endsWith('@lucca.fr')) {
+			this.showMessageToUser('Cette application est pour le moment limitée au domaine lucca.fr');
+			this.signOut();
+			return;
+		}
+
         // Get profile pic and user's name from the Firebase user object.
         var profilePicUrl = user.photoURL;
         var userName = user.displayName;
@@ -75,7 +82,8 @@ LuccaLunch.prototype.onAuthStateChanged = function (user) {
         this.signInButton.setAttribute('hidden', 'true');
 
         this.showLunchs();
-    } else { // User is signed out!
+
+    } else {
         // Hide user's profile and sign-out button.
         this.userName.setAttribute('hidden', 'true');
         this.userPic.setAttribute('hidden', 'true');
