@@ -124,13 +124,13 @@ LuccaLunch.prototype.hideLunchs = function () {
     this.lunchsListDiv.innerHTML = '';
 };
 
-LuccaLunch.prototype.addUserToLunch = function(lunchKey, uid) {
-    this.database.ref('lunchs/' + lunchKey + '/users/' + uid).set(true);
+LuccaLunch.prototype.addUserToLunch = function(lunchKey, user) {
+    this.database.ref('lunchs/' + lunchKey + '/users/' + user.uid).set(user.displayName);
     // Remove this user from the others lunchs
     this.database.ref('lunchs/').once('value', function (lunchs) {
         lunchs.forEach(function (lunch) {
             if(lunch.key != lunchKey) {
-                window.luccalunch.removeUserFromLunch(lunch.key, uid);
+                window.luccalunch.removeUserFromLunch(lunch.key, user.uid);
             }
         });
     });
@@ -152,7 +152,7 @@ LuccaLunch.prototype.displayLunch = function(data) {
     }
     div.querySelector('.mdl-card__title-text').textContent = val.place;
     div.querySelector('.mdl-card__supporting-text').textContent = val.comment;
-    div.querySelector('.add-user').addEventListener('click', this.addUserToLunch.bind(this, data.key, this.auth.currentUser.uid));
+    div.querySelector('.add-user').addEventListener('click', this.addUserToLunch.bind(this, data.key, this.auth.currentUser));
     div.querySelector('.remove-user').addEventListener('click', this.removeUserFromLunch.bind(this, data.key, this.auth.currentUser.uid));
     div.querySelector('.user-count').setAttribute('data-badge', val.users ? Object.keys(val.users).length : 0);
 };
@@ -164,11 +164,11 @@ var TEMPLATE =
         '</div>' +
         '<div class="mdl-card__supporting-text"></div>' +
         '<div class="mdl-card__actions mdl-card--border">' +
-            '<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect add-user">OK</a>' +
-            '<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect remove-user">Actually no</a>' +
+            '<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect add-user">Je viens</a>' +
+            '<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect remove-user">Je ne viens plus</a>' +
         '</div>' +
         '<div class="mdl-card__menu">' +
-            '<div class="material-icons mdl-badge mdl-badge--overlap user-count" data-badge="1">account_box</div>' +
+            '<div class="material-icons mdl-badge mdl-badge--overlap user-count" data-badge="0">account_box</div>' +
         '</div>' +
     '</div>';
 
