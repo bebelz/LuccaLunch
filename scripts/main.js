@@ -104,9 +104,16 @@ LuccaLunch.prototype.createLunch = function () {
     this.database.ref('lunchs/').push({
         date: Date.now(),
         place: this.createLunchPlaceInput.value,
-        comment: this.createLunchCommentInput.value
+        comment: this.createLunchCommentInput.value,
+		author: this.auth.currentUser.uid
     });
     this.hideCreateLunchDialog();
+};
+
+LuccaLunch.prototype.deleteLunch = function (lunch) {
+	if(this.auth.currentUser.uid === lunch.val().author) {
+		this.database.ref('lunchs/' + lunch.key).remove();
+	}
 };
 
 LuccaLunch.prototype.showLunchs = function () {
@@ -116,8 +123,12 @@ LuccaLunch.prototype.showLunchs = function () {
     var showLunch = function (data) {
         this.displayLunch(data);
     }.bind(this);
+	var hideLunch = function (data) {
+		this.hideLunch(data);
+	}.bind(this);
     this.lunchsRef.on('child_added', showLunch);
     this.lunchsRef.on('child_changed', showLunch);
+	this.lunchsRef.on('child_removed', hideLunch);
 };
 
 LuccaLunch.prototype.hideLunchs = function () {
@@ -152,9 +163,18 @@ LuccaLunch.prototype.displayLunch = function(data) {
     }
     div.querySelector('.mdl-card__title-text').textContent = val.place;
     div.querySelector('.mdl-card__supporting-text').textContent = val.comment;
-    div.querySelector('.add-user').addEventListener('click', this.addUserToLunch.bind(this, data.key, this.auth.currentUser));
-    div.querySelector('.remove-user').addEventListener('click', this.removeUserFromLunch.bind(this, data.key, this.auth.currentUser.uid));
+	div.querySelector('.add-user').addEventListener('click', this.addUserToLunch.bind(this, data.key, this.auth.currentUser));
+	div.querySelector('.remove-user').addEventListener('click', this.removeUserFromLunch.bind(this, data.key, this.auth.currentUser.uid));
+	if(this.auth.currentUser.uid === data.val().author) {
+		div.querySelector('.delete-lunch').addEventListener('click', this.deleteLunch.bind(this, data));
+	} else {
+		div.querySelector('.delete-lunch').setAttribute('hidden', 'true');
+	}
     div.querySelector('.user-count').setAttribute('data-badge', val.users ? Object.keys(val.users).length : 0);
+};
+
+LuccaLunch.prototype.hideLunch = function(data) {
+	document.getElementById(data.key).remove();
 };
 
 var TEMPLATE =
@@ -164,8 +184,9 @@ var TEMPLATE =
         '</div>' +
         '<div class="mdl-card__supporting-text"></div>' +
         '<div class="mdl-card__actions mdl-card--border">' +
-            '<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect add-user">Je viens</a>' +
-            '<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect remove-user">Je ne viens plus</a>' +
+            '<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect add-user">+1</a>' +
+            '<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect remove-user">-1</a>' +
+			'<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect delete-lunch">Supprimer</a>' +
         '</div>' +
         '<div class="mdl-card__menu">' +
             '<div class="material-icons mdl-badge mdl-badge--overlap user-count" data-badge="0">account_box</div>' +
